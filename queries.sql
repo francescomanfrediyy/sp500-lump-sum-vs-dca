@@ -10,12 +10,12 @@
 -- 1. Data quality checks
 -- =========================================================
 SELECT COUNT(*) AS n_rows, MIN(date) AS first_date, MAX(date) AS last_date FROM sp500;
-SELECT date, COUNT(*) FROM sp500 GROUP BY date HAVING COUNT(*) > 1;          -- duplicates
-SELECT * FROM sp500 WHERE close IS NULL OR close = 0;                          -- nulls / zeros
-SELECT * FROM sp500 WHERE high < low;                                          -- high below low
-SELECT * FROM sp500 WHERE close < low OR close > high;                         -- close outside range (2025-09-25)
+SELECT date, COUNT(*) FROM sp500_data GROUP BY date HAVING COUNT(*) > 1;          -- duplicates
+SELECT * FROM sp500_data WHERE close IS NULL OR close = 0;                          -- nulls / zeros
+SELECT * FROM sp500_data WHERE high < low;                                          -- high below low
+SELECT * FROM sp500_data WHERE close < low OR close > high;                         -- close outside range (2025-09-25)
 -- rows of days when the market was closed (open = high = low = close)
-SELECT * FROM sp500 WHERE open = high AND high = low AND low = close ORDER BY date;
+SELECT * FROM sp500_data WHERE open = high AND high = low AND low = close ORDER BY date;
 
 -- =========================================================
 -- 2. Clean table: the raw table stays untouched
@@ -23,7 +23,7 @@ SELECT * FROM sp500 WHERE open = high AND high = low AND low = close ORDER BY da
 -- =========================================================
 CREATE TABLE sp500_clean AS
 SELECT *
-FROM sp500
+FROM sp500_data
 WHERE date NOT IN (
   '2001-09-11', '2012-07-04', '2012-09-03', '2012-10-29', '2012-10-30',
   '2012-11-22', '2012-12-25', '2013-01-01', '2013-01-21'
